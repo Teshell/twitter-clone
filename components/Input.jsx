@@ -19,12 +19,15 @@ import {
 } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { useSession } from "next-auth/react";
 
 const Input = () => {
   const [input, setInput] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
   const [showEmojis, setShowEmojis] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const { data: session } = useSession();
 
   const filePickerRef = useRef(null);
 
@@ -33,10 +36,10 @@ const Input = () => {
     setLoading(true);
 
     const docRef = await addDoc(collection(db, "posts"), {
-      // id: session.user.uid,
-      // username: session.user.name,
-      // userImg: session.user.image,
-      // tag: session.user.tag,
+      id: session.user.uid,
+      username: session.user.name,
+      userImg: session.user.image,
+      tag: session.user.tag,
       text: input,
       timestamp: serverTimestamp(storage),
     });
@@ -85,8 +88,8 @@ const Input = () => {
       }`}
     >
       <img
-        className="h-11 w-11 rounded-full xl:mr-2.5 cursor-pointer"
-        src="https://d2qp0siotla746.cloudfront.net/img/use-cases/profile-picture/template_0.jpg"
+        className="h-11 w-11 rounded-full xl:mr-2.5"
+        src={session?.user?.image}
         alt=""
       />
 

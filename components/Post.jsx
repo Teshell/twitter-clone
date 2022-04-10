@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useRecoilState } from "recoil";
 import { useSession } from "next-auth/react";
 
 import {
@@ -14,13 +16,24 @@ import {
   HeartIcon as HeartIconFilled,
   ChatIcon as ChatIconFilled,
 } from "@heroicons/react/solid";
+
 import Moment from "react-moment";
+
+import { modalState, postIdState } from "../atoms/modalAtom";
+import { useRouter } from "next/router";
 
 const Post = ({ id, post, postPage }) => {
   const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useRecoilState(modalState);
+  const [postId, setPostId] = useRecoilState(postIdState);
+  const [comments, setComments] = useState([]);
+  const router = useRouter();
 
   return (
-    <div className="p-3 flex cursor-pointer border-b border-gray-700">
+    <div
+      className="p-3 flex cursor-pointer border-b border-gray-700"
+      onClick={() => router.push(`/${id}`)}
+    >
       {!postPage && (
         <img
           src={post?.userImg}
@@ -87,7 +100,7 @@ const Post = ({ id, post, postPage }) => {
             postPage && "mx-auto"
           }`}
         >
-          {/* <div
+          <div
             className="flex items-center space-x-1 group"
             onClick={(e) => {
               e.stopPropagation();
@@ -103,7 +116,7 @@ const Post = ({ id, post, postPage }) => {
                 {comments.length}
               </span>
             )}
-          </div> */}
+          </div>
 
           {session.user.uid === post?.id ? (
             <div
